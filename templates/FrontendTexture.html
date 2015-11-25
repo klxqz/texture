@@ -1,0 +1,123 @@
+{if !empty($features_selectable2)}
+    {if $fancybox}
+        <script type="text/javascript" src="{$wa_url}wa-apps/shop/plugins/texture/js/fancybox/jquery.fancybox.pack.js"></script>
+        <link rel="stylesheet" type="text/css" href="{$wa_url}wa-apps/shop/plugins/texture/js/fancybox/jquery.fancybox.css" media="screen">
+    {/if}
+    <style>
+        #fancybox-content{ border-width: 0px !important; }
+        h4.texture{ margin: 20px;padding-top: 10px;text-align: center;color: #000;font-weight: 400;font-size: 34px; }
+        #features_texture_img { height: 150px;width: 100%;overflow: hidden; }
+        #features_texture_img img{ display: block;width: 100%;margin-top: -32%; }
+        .fancybox-skin{ padding: 0px !important; }
+        .name_features{ padding: 10px 15px;font-size: 20px;font-weight: 400;color: #3c3c3c; }
+        .texture_view { width: 55px;float: left;height: 55px;overflow: hidden; }
+        .texture_view img{ width: 100%; }
+        .inline-select a{ text-decoration: none;display: block;overflow: hidden;border-bottom: 1px solid #EFEFEF;padding: 2px; }
+        .inline-select a:hover{ background: #F1F1F1; }
+        .inline-select { max-height: 180px;overflow-y: auto;margin: 0px 15px; }
+        .inline-select span{ padding: 5px 10px !important;font-size: 13px;color: #7e7e7e; }
+        .inline-select a.active{ background: #E0E0E0;box-shadow: 0 0 1px #aaa inset; }
+        .button_texture{ width: 90px !important;display: block !important;margin: 17px auto 17px !important; text-align: center; }
+        a.various1{ display: block;overflow: hidden;box-shadow: 0 0 5px #DEDEDE inset;border: 1px solid #ccc;border-radius: 5px;max-width: 290px;font-size: 13px;    color: #7e7e7e; }
+        a.various1 span{ padding: 5px 10px !important;}
+        .arrow b {
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAECAYAAACzzX7wAAAAPklEQVR42mJsaGp1YGBg2ArEXAyYoIupvrbqAJDhDcTf0CWBcuVMIBYWRWBJMOv///9wDLTOHoibkMUAAgwA/i8kr9fyT+YAAAAASUVORK5CYII=) center center no-repeat;
+            width: 8px;
+            height: 4px;
+            margin: auto;
+            top: -6px;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            display: block;
+        }
+        .arrow {
+            width: 19px !important;
+            right: 0;
+            bottom: 0;
+            z-index: 200;
+
+        }
+        .option-item{ margin: 15px 0; } 
+        .various1 .name_texture { padding: 5px;    max-width: 70%; }
+        .various1 table { background: #fff; border-collapse: collapse;width: 100%;    margin: 0px;    padding: 0px; }
+        .various1 table td { vertical-align: middle; border: none; padding: 0px; }
+        .various1 table #selected { min-width: 30px; }
+    </style>
+
+    {foreach $features_selectable2 as $f}
+
+        <div class="option-item">
+            <span class="option-name">{$f.name}</span><br />
+            <div class="featur-{$f.id}">
+                <a class="various1" href="#inline-{$f.id}"><table><tr><td class="texture_view"></td><td class="name_texture"></td><td id="selected"><span class="arrow"><b></b></span></td></tr></table></a>
+                <div style="display:none;">
+                    <div id="inline-{$f.id}">
+                        <h4 class="texture">{$f.name}</h4>
+                        <div id="features_texture_img"><img src=""></div>
+                        <div class="name_features">{$f.name}</div>
+                        <div class="inline-select">
+                            {$feature_settings_texture=$settings.feature}
+                            {foreach $f.values as $v_id => $v}
+                                {if !isset($default_sku_features[$f.id])}
+                                    {$default_sku_features[$f.id]=$v_id}
+                                {/if}
+                                <a data-value="{$v_id}" href="#" {if $v_id == ifset($default_sku_features[$f.id])}  class="active" {/if}>
+                                    <div class="texture_view">{if $feature_settings_texture[$f.id].img[$v_id]}<img src="{$image_url}{$feature_settings_texture[$f.id].img[$v_id]}"/>{/if}</div>
+                                    <span class="name_texture">{$v}</span>
+                                </a>
+                            {/foreach}
+                        </div>
+                        <button class="button button_texture" data-feature-id="{$f.id}"><span>Выбрать</span></button>
+                    </div> 
+                </div>
+
+            </div>
+
+        </div>
+    {/foreach}
+    <script>
+        $(".various1").fancybox({
+            width: 390,
+            height: 'auto',
+            fitToView: false,
+            autoSize: false,
+            closeClick: false,
+            openEffect: 'none',
+            closeEffect: 'none'
+        });
+        $(document).ready(function () {
+            $('.inline-select a').on("click", function () {
+                $(this).parent().find('a').removeClass('active');
+                $(this).addClass('active');
+                var src_texture = $(this).find('div.texture_view img').attr('src');
+                $(this).parent().parent().find('#features_texture_img img').attr('src', src_texture);
+                return false;
+            });
+            $('.button_texture').on("click", function () {
+                var id_feature_value = $(this).parent().find('.inline-select a.active').data('value');
+                var id_feature = $(this).data('feature-id');
+                $("[name='features[" + id_feature + "]'] ").val(id_feature_value).prop('selected', true).change();
+                var img_src = $(this).parent('div').find('.inline-select a.active img').attr('src');
+                var name_texture = $(this).parent('div').find('.inline-select a.active .name_texture').html();
+                $('.featur-' + id_feature).find('> a.various1 .texture_view').html('<img src="' + img_src + '">');
+                $('.featur-' + id_feature).find('> a.various1 .name_texture').html(name_texture);
+                $.fancybox.close();
+            });
+
+            $('.various1').each(function () {
+                var img_src = $(this).parent('div').find('.inline-select a.active img').attr('src');
+                var name_texture = $(this).parent('div').find('.inline-select a.active .name_texture').html();
+                var image_now = $(this).parent('div').find('.inline-select a.active img').attr('src');
+                $(this).find('.texture_view').html('<img src="' + img_src + '">');
+                $(this).find('.name_texture').html(name_texture);
+                $(this).parent('div').find('#features_texture_img img').attr('src', image_now);
+            });
+
+        {foreach $features_selectable2 as $f}
+            $("[name='features[{$f.id}]']").parent('div').css('display', 'none');
+        {/foreach}
+        });
+
+    </script>
+{/if}
