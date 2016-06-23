@@ -10,7 +10,7 @@ class shopTexturePluginBackendDeleteImageController extends waJsonController {
         $settings = $app_settings_model->get(shopTexturePlugin::$plugin_id, 'feature');
 
         $feature = json_decode($settings, true);
-        $image_path = wa()->getDataPath('plugins/texture/images/', 'shop');
+        $image_path = wa()->getDataPath('plugins/texture/images/', true, 'shop');
         $name = $feature[$feature_id]['img'][$feature_value];
 
         if ($name && file_exists($image_path . $name)) {

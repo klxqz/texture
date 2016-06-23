@@ -15,16 +15,16 @@ class shopTexturePlugin extends shopPlugin {
         $view->assign('settings', $settings);
 
         if (!empty($product['features_selectable'])) {
-            $features_selectable2 = $product['features_selectable'];
+            $texture_features_selectable = $product['features_selectable'];
             foreach ($settings['feature'] as $key => $value) {
                 if ($value['status'] == 0) {
-                    unset($features_selectable2[$key]);
+                    unset($texture_features_selectable[$key]);
                 }
             }
-            $view->assign('features_selectable2', $features_selectable2);
+            $view->assign('texture_features_selectable', $texture_features_selectable);
         }
 
-        $image_url = wa()->getDataUrl('plugins/texture/images/', 'shop');
+        $image_url = wa()->getDataUrl('plugins/texture/images/', true, 'shop');
         $view->assign('image_url', $image_url);
         $view->assign('default_sku_features', $product['sku_features']);
         $view->assign('fancybox', $settings['fancybox']);

@@ -7,13 +7,13 @@ class shopTexturePluginBackendSaveImageController extends waJsonController {
 
         if ($file->uploaded()) {
 
-            $image_path = wa()->getDataPath('plugins/texture/images/', 'shop');
-            $image_url = wa()->getDataUrl('plugins/texture/images/', 'shop');
+            $image_path = wa()->getDataPath('plugins/texture/images/', true, 'shop');
+            $image_url = wa()->getDataUrl('plugins/texture/images/', true, 'shop');
             $path_info = pathinfo($file->name);
             $name = $this->uniqueName($image_path, $path_info['extension']);
 
             $app_settings_model = new waAppSettingsModel();
-            
+
             $size = 600;
             $resize = 1;
             try {

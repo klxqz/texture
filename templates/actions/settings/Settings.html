@@ -42,7 +42,7 @@
                     <input type="checkbox" class="ibutton" name="shop_texture[default_output]" value="1"{if $settings.default_output} checked{/if}>
                     <p class="gray">
                         <i class="hint"></i>
-                        Вы можете отключить стандартный вывод, это может быть полезно если вы используете хелпер вывода
+                        Вы можете отключить стандартный вывод (хук frontend_product.cart), это может быть полезно если вы используете хелпер вывода
                     </p>
                 </div>
             </div>
@@ -62,8 +62,9 @@
                 </div>
             </div>
         </div>
-        <hr>
+
         <div{if !$settings.status} style="display:none"{/if}>
+            <h2>Характеристики</h2>
             {foreach $features as $id => $feature}
                 {if $feature.multiple}
                     <div class="field-group">
@@ -73,11 +74,11 @@
                             </div>
                             <div class="value">
                                 <input type="hidden" name="shop_texture[feature][{$feature.id}][status]" value="0" >
-                                <input type="checkbox" class="ibutton-status-parent" name="shop_texture[feature][{$feature.id}][status]" value="1"{if $feature_s[$feature.id].status} checked{/if} />
+                                <input type="checkbox" class="ibutton-status-parent" name="shop_texture[feature][{$feature.id}][status]" value="1"{if $feature_s[$feature.id].status|default:0} checked{/if} />
                             </div>
                         </div>
                         {foreach $feature.values as $id_value => $value}
-                            <div class="field feature_{$feature.id}_{$id_value}" {if !$feature_s[$feature.id].status} style="display:none" {/if}>
+                            <div class="field feature_{$feature.id}_{$id_value}" {if !$feature_s[$feature.id].status|default:0} style="display:none" {/if}>
                                 <div class="name"></div>
                                 <div class="value">
                                     <div class="preview">
