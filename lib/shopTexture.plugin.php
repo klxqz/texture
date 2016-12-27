@@ -2,45 +2,108 @@
 
 class shopTexturePlugin extends shopPlugin {
 
-    public static $plugin_id = array('shop', 'texture');
+    public static $templates = array(
+        'texture' => array(
+            'name' => 'Главный шаблон',
+            'tpl_path' => 'plugins/texture/templates/',
+            'tpl_name' => 'FrontendTexture',
+            'tpl_ext' => 'html',
+            'public' => false,
+        ),
+        'texture_css' => array(
+            'name' => 'texture.css',
+            'tpl_path' => 'plugins/texture/css/',
+            'tpl_name' => 'texture',
+            'tpl_ext' => 'css',
+            'public' => true
+        ),
+        'texture_js' => array(
+            'name' => 'texture.js',
+            'tpl_path' => 'plugins/texture/js/',
+            'tpl_name' => 'texture',
+            'tpl_ext' => 'js',
+            'public' => true
+        ),
+    );
 
-    public static function display($product) {
-        $app_settings_model = new waAppSettingsModel();
-        $settings = $app_settings_model->get(self::$plugin_id);
-        if (!$settings['status']) {
-            return false;
-        }
-        $view = wa()->getView();
-        $settings['feature'] = json_decode($settings['feature'], true);
-        $view->assign('settings', $settings);
+    public function saveSettings($settings = array()) {
+        parent::saveSettings($settings);
 
-        if (!empty($product['features_selectable'])) {
-            $texture_features_selectable = $product['features_selectable'];
-            foreach ($settings['feature'] as $key => $value) {
-                if ($value['status'] == 0) {
-                    unset($texture_features_selectable[$key]);
+        if ($templates = waRequest::post('templates')) {
+            foreach ($templates as $template_id => $template) {
+                $s_template = self::$templates[$template_id];
+                if (!empty($template['reset_tpl']) || waRequest::post('reset_tpl_all')) {
+                    $tpl_full_path = $s_template['tpl_path'] . $s_template['tpl_name'] . '.' . $s_template['tpl_ext'];
+                    $template_path = wa()->getDataPath($tpl_full_path, $s_template['public'], 'shop', true);
+                    @unlink($template_path);
+                } else {
+                    $tpl_full_path = $s_template['tpl_path'] . $s_template['tpl_name'] . '.' . $s_template['tpl_ext'];
+                    $template_path = wa()->getDataPath($tpl_full_path, $s_template['public'], 'shop', true);
+                    if (!file_exists($template_path)) {
+                        $tpl_full_path = $s_template['tpl_path'] . $s_template['tpl_name'] . '.' . $s_template['tpl_ext'];
+                        $template_path = wa()->getAppPath($tpl_full_path, 'shop');
+                    }
+                    $content = file_get_contents($template_path);
+                    if (!empty($template['template']) && strcmp(str_replace("\r", "", $template['template']), str_replace("\r", "", $content)) != 0) {
+                        $tpl_full_path = $s_template['tpl_path'] . $s_template['tpl_name'] . '.' . $s_template['tpl_ext'];
+                        $template_path = wa()->getDataPath($tpl_full_path, $s_template['public'], 'shop', true);
+                        $f = fopen($template_path, 'w');
+                        if (!$f) {
+                            throw new waException('Не удаётся сохранить шаблон. Проверьте права на запись ' . $template_path);
+                        }
+                        fwrite($f, $template['template']);
+                        fclose($f);
+                    }
                 }
             }
-            $view->assign('texture_features_selectable', $texture_features_selectable);
+        }
+    }
+
+    public static function display($product) {
+        $plugin = wa()->getPlugin('texture');
+        if (!$plugin->getSettings('status')) {
+            return false;
+        }
+        if (!$product['features_selectable']) {
+            return false;
         }
 
-        $image_url = wa()->getDataUrl('plugins/texture/images/', true, 'shop');
-        $view->assign('image_url', $image_url);
-        $view->assign('default_sku_features', $product['sku_features']);
-        $view->assign('fancybox', $settings['fancybox']);
+        $texture_model = new shopTexturePluginModel();
+        $textures = array();
 
-        $template_path = wa()->getAppPath('plugins/texture/templates/FrontendTexture.html', 'shop');
-        $html = $view->fetch($template_path);
+        foreach ($product['features_selectable'] as $feature_id => $feature) {
+            $feature_texrures = $texture_model->getByField(array('feature_id' => $feature_id, 'value_id' => array_keys($feature['values'])), true);
+            if ($feature_texrures) {
+                foreach ($feature_texrures as $feature_texrure) {
+                    $textures[$feature_id][$feature_texrure['value_id']] = $feature_texrure;
+                }
+            }
+        }
+
+        if (!$textures) {
+            return false;
+        }
+
+        $view = wa()->getView();
+        $view->assign(array(
+            'textures' => $textures,
+            'image_url' => wa()->getDataUrl('plugins/texture/', true, 'shop'),
+            'fancybox' => $plugin->getSettings('fancybox'),
+            'texture_css_url' => shopTextureHelper::getTemplateUrl('texture_css'),
+            'texture_js_url' => shopTextureHelper::getTemplateUrl('texture_js')
+        ));
+
+        $texture_template = shopTextureHelper::getTemplates('texture', false);
+        $html = $view->fetch($texture_template['template_path']);
 
         return $html;
     }
 
     public function frontendProduct($product) {
-        $app_settings_model = new waAppSettingsModel();
-
-        if ($app_settings_model->get(self::$plugin_id, 'default_output')) {
-            return array('cart' => self::display($product));
+        if (!$this->getSettings('default_output')) {
+            return false;
         }
+        return array($this->getSettings('default_output') => self::display($product));
     }
 
 }

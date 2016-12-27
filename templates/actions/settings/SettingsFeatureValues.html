@@ -1,0 +1,23 @@
+<h2 class="grey">Значения характеристики «{$feature.name|escape}»</h2>
+{foreach $values as $value_id => $value}
+    <div class="field">
+        <div class="name">
+            {$value}
+        </div>
+        <div data-value-id="{$value_id}" class="value">
+            <div class="preview">
+                {if !empty($textures[$value_id])}
+                    <img src="{$image_url}{$textures[$value_id].min_img}" />
+                {/if}
+            </div>
+            <a class="fileinput-button" href="javascript:void(0);">
+                <i class="icon16 add"></i>
+                <input  class="fileupload"  accept="image/jpeg,image/png,image/gif" type="file" name="img[{$value_id}]">
+            </a>
+            <a class="deleteButton{if empty($textures[$value_id])} hidden{/if}" href="#" title="Удалить">
+                <i class="icon16 delete"></i>
+            </a>
+        </div>
+    </div>
+    <div class="clear-both"></div>
+{/foreach}

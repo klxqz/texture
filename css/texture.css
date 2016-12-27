@@ -1,0 +1,26 @@
+.option-item{ margin: 15px 0; } 
+.texture-selector .name_texture { padding: 5px;    max-width: 70%; }
+.texture-selector table { background: #fff; border-collapse: collapse;width: 100%;    margin: 0px;    padding: 0px; }
+.texture-selector table td { vertical-align: middle; border: none; padding: 0px; }
+.texture-selector table .selected { min-width: 30px; }
+#fancybox-content{ border-width: 0px !important; }
+h4.texture{ margin: 20px;padding-top: 10px;text-align: center;color: #000;font-weight: 400;font-size: 22px; }
+.features_texture_img { height: 150px;width: 100%;overflow: hidden; }
+.features_texture_img img{ display: block;width: 100%;margin-top: -32%; }
+.fancybox-skin{ padding: 0px !important; }
+.name_features{ padding: 10px 15px;font-size: 16px;font-weight: 400;color: #3c3c3c; }
+.texture-selector table td.texture_view,.texture_view { width: 55px;float: left;height: 55px;overflow: hidden; padding: 5px; }
+.texture_view img{ width: 100%; }
+.inline-select a{ text-decoration: none;display: block;overflow: hidden;border-bottom: 1px solid #EFEFEF;padding: 2px; }
+.inline-select a:hover{ background: #F1F1F1; }
+.inline-select { max-height: 180px;overflow-y: auto;margin: 0px 15px; }
+.inline-select span{ padding: 5px 10px !important;font-size: 13px;color: #7e7e7e; }
+.inline-select a.active{ background: #E0E0E0;box-shadow: 0 0 1px #aaa inset; }
+.button_texture{ width: 90px !important;display: block !important;margin: 17px auto 17px !important; text-align: center; }
+a.texture-selector{ display: block;overflow: hidden;box-shadow: 0 0 5px #DEDEDE inset;border: 1px solid #ccc;border-radius: 5px;max-width: 290px;font-size: 13px;    color: #7e7e7e; }
+a.texture-selector span{ padding: 5px 10px !important;}
+.arrow { width: 19px !important; right: 0; bottom: 0; z-index: 200; }
+.arrow b {
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAECAYAAACzzX7wAAAAPklEQVR42mJsaGp1YGBg2ArEXAyYoIupvrbqAJDhDcTf0CWBcuVMIBYWRWBJMOv///9wDLTOHoibkMUAAgwA/i8kr9fyT+YAAAAASUVORK5CYII=) center center no-repeat;
+    width: 8px; height: 4px; margin: auto; top: -6px; left: 0; bottom: 0; right: 0; display: block;
+}
